@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<taglib>
+	<tlib-version>1.0</tlib-version>
+	<short-name>gae</short-name>
+	<uri>http://pchudzik.github.com</uri>
+	<jsp-version>2.2</jsp-version>
+
+	<tag>
+		<name>key</name>
+		<display-name>Google app enginge key to string</display-name>
+		<tag-class>com.github.eljah.visualbusroutes.tags.GoogleKeyTag</tag-class>
+		<attribute>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>com.google.appengine.api.datastore.Key</type>
+		</attribute>
+	</tag>
+</taglib>
