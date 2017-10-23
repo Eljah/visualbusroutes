@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cronentries>
     <cron>
-        <url>/load/aaa</url>
+        <url>/load/findroutes</url>
+        <description>Add count + 1 every 1 hours</description>
+        <schedule>every 1 minutes</schedule>
+    </cron>
+    <cron>
+        <url>/load/findstops</url>
         <description>Add count + 1 every 1 hours</description>
         <schedule>every 1 minutes</schedule>
     </cron>
