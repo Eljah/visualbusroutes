@@ -4,6 +4,7 @@ import com.github.eljah.visualbusroutes.domain.*;
 import com.github.eljah.visualbusroutes.repository.*;
 import com.google.appengine.api.quota.QuotaService;
 import com.google.appengine.api.quota.QuotaServiceFactory;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Service;
@@ -119,6 +120,15 @@ public class OSMService {
         }
 
         public void handle(Node node) {
+            if (node.getTags()!=null&&node.getTags().get("highway")!=null&&node.getTags().get("highway").equals("bus_stop")) {
+//                System.out.println(node.getTags().get("name"));
+//                System.out.println(node.getTags().get("name:tt"));
+//                System.out.println(node.getTags().get("name:ru"));
+//                System.out.println(node.getTags().get("name:en"));
+                BusStopToCheck busStopToCheck=new BusStopToCheck();
+                busStopToCheck.setOsmId(node.getId());
+                busStopToCheckRepository.save(busStopToCheck);
+            }
         }
 
         public void handle(Way way) {
@@ -138,49 +148,54 @@ public class OSMService {
         }
     };
 
-    @Transactional
-    public void doOSMStopsExtractionFromRoutes() {
-        //BusRouteToCheck busRouteToCheck = busRouteToCheckRepository.findOneByChecked(false);//busRouteToCheckList.get(0);
-        //busRouteToCheck.setChecked(true);
-        //busRouteToCheckRepository.save(busRouteToCheck);
-        BusRouteToCheck busRouteToCheck=obtainCheckedBusRoute();
-        Relation bus = getMapDao().getRelation(busRouteToCheck.getOsmId());
-        for (RelationMember member : bus.getMembers()) {
-
-            if (member.getType().equals(Element.Type.NODE)) {
-
-                Node stop = getMapDao().getNode(member.getRef());
-                BusStopToCheck busStopToCheck = new BusStopToCheck();
-                busStopToCheck.setBusRouteToCheck(busRouteToCheck);
-                busStopToCheck.setOsmId(stop.getId());
-                busStopToCheck.setChecked("0");
-                busStopToCheckRepository.save(busStopToCheck);
-                if (busRouteToCheck!=null&& busRouteToCheck.getBusStopToCheckList()!=null&&busStopToCheck!=null) {
-                    busRouteToCheck.getBusStopToCheckList().add(busStopToCheck);
-                }
-
-            }
-        }
-        busRouteToCheck.setChecked("1");
-        busRouteToCheckRepository.save(busRouteToCheck);
-
-    }
-
-    //@Transactional
-    BusRouteToCheck obtainCheckedBusRoute() {
-        List<BusRouteToCheck> busRouteToCheckList = busRouteToCheckRepository.findTop1ByChecked("0");
-
-        if (busRouteToCheckList != null && busRouteToCheckList.size() > 0) {
-            BusRouteToCheck busRouteToCheck = busRouteToCheckList.get(0);
-            Long toRet = busRouteToCheck.getOsmId();
-            //busRouteToCheck.setChecked("1");
-            //busRouteToCheckRepository.save(busRouteToCheck);
-            //busRouteToCheckRepository.delete(busRouteToCheck);
-            return busRouteToCheck;
-        } else {
-            return null;
-        }
-    }
+//    @Transactional
+//    public void doOSMStopsExtractionFromRoutes() {
+//        //BusRouteToCheck busRouteToCheck = busRouteToCheckRepository.findOneByChecked(false);//busRouteToCheckList.get(0);
+//        //busRouteToCheck.setChecked(true);
+//        //busRouteToCheckRepository.save(busRouteToCheck);
+//        BusRouteToCheck busRouteToCheck=obtainCheckedBusRoute();
+//        Relation bus = getMapDao().getRelation(busRouteToCheck.getOsmId());
+//        List<BusStopToCheck> busStopToCheckList=busRouteToCheck.getBusStopToCheckList();
+//        if (busStopToCheckList==null) {
+//            busStopToCheckList= Lists.newArrayList();
+//        }
+//        for (RelationMember member : bus.getMembers()) {
+//
+//            if (member.getType().equals(Element.Type.NODE)) {
+//
+//                Node stop = getMapDao().getNode(member.getRef());
+//                BusStopToCheck busStopToCheck = new BusStopToCheck();
+//                busStopToCheck.setBusRouteToCheck(busRouteToCheck);
+//                busStopToCheck.setOsmId(stop.getId());
+//                busStopToCheck.setChecked("0");
+//                //this part actually doesn' add nothing to busrouteToCheck object and i'm comfortable with that
+//                //it ssems to be needed to establish the common entity group of particular busRouteToCheck wioth particular BusStopToCheck
+//
+//               //busStopToCheckList.add(busStopToCheck);
+//                busStopToCheckRepository.save(busStopToCheck);
+//            }
+//        }
+//        //busRouteToCheck.setBusStopToCheckList(busStopToCheckList);
+//        busRouteToCheck.setChecked("1");
+//        busRouteToCheckRepository.save(busRouteToCheck);
+//
+//    }
+//
+//    //@Transactional
+//    BusRouteToCheck obtainCheckedBusRoute() {
+//        List<BusRouteToCheck> busRouteToCheckList = busRouteToCheckRepository.findTop1ByChecked("0");
+//
+//        if (busRouteToCheckList != null && busRouteToCheckList.size() > 0) {
+//            BusRouteToCheck busRouteToCheck = busRouteToCheckList.get(0);
+//            Long toRet = busRouteToCheck.getOsmId();
+//            //busRouteToCheck.setChecked("1");
+//            //busRouteToCheckRepository.save(busRouteToCheck);
+//            //busRouteToCheckRepository.delete(busRouteToCheck);
+//            return busRouteToCheck;
+//        } else {
+//            return null;
+//        }
+//    }
     //System.out.println(member.getRef());
 //                        Node stop = getMapDao().getNode(member.getRef());
 //                        BusStop busStop = busStopRepository.findTopByOsmId(stop.getId());

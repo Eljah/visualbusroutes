@@ -1,6 +1,8 @@
 package com.github.eljah.visualbusroutes.domain;
 
 
+import com.google.common.collect.Lists;
+
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Unique;
 import javax.persistence.*;
@@ -17,8 +19,8 @@ public class BusRouteToCheck extends BaseEntity {
     Long osmId;
     String checked;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "busRouteToCheck")
-    List<BusStopToCheck> busStopToCheckList=new ArrayList<>();
+    //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "busRouteToCheck")
+    //List<BusStopToCheck> busStopToCheckList= Lists.newArrayList();
 
     public long getOsmId() {
         return osmId;
@@ -36,11 +38,11 @@ public class BusRouteToCheck extends BaseEntity {
         this.checked = checked;
     }
 
-    public List<BusStopToCheck> getBusStopToCheckList() {
-        return busStopToCheckList;
-    }
-
-    public void setBusStopToCheckList(List<BusStopToCheck> busStopToCheckList) {
-        this.busStopToCheckList = busStopToCheckList;
-    }
+//    public List<BusStopToCheck> getBusStopToCheckList() {
+//        return busStopToCheckList;
+//    }
+//
+//    public void setBusStopToCheckList(List<BusStopToCheck> busStopToCheckList) {
+//        this.busStopToCheckList = busStopToCheckList;
+//    }
 }

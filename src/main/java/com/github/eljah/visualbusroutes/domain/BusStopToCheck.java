@@ -30,14 +30,14 @@ public class BusStopToCheck extends BaseEntity {
         this.checked = checked;
     }
 
-    @ManyToOne
-    public BusRouteToCheck busRouteToCheck;
-
-    public BusRouteToCheck getBusRouteToCheck() {
-        return busRouteToCheck;
-    }
-
-    public void setBusRouteToCheck(BusRouteToCheck busRouteToCheck) {
-        this.busRouteToCheck = busRouteToCheck;
-    }
+//    @ManyToOne
+//    public BusRouteToCheck busRouteToCheck;
+//
+//    public BusRouteToCheck getBusRouteToCheck() {
+//        return busRouteToCheck;
+//    }
+//
+//    public void setBusRouteToCheck(BusRouteToCheck busRouteToCheck) {
+//        this.busRouteToCheck = busRouteToCheck;
+//    }
 }
