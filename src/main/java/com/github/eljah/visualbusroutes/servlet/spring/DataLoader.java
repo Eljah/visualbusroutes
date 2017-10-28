@@ -29,11 +29,18 @@ public class DataLoader {
         return "/helloSpring";
     }
 
-//
-//    @RequestMapping(value = "/findstops", method = RequestMethod.GET)
-//    public String findstops() {
-//        osmService.doOSMStopsExtractionFromRoutes();
-//        return "/helloSpring";
-//    }
+
+    @RequestMapping(value = "/routenames", method = RequestMethod.GET)
+    public String routenames() {
+        osmService.doOSMRoutesNameExtraction();
+        return "/helloSpring";
+    }
+
+    @RequestMapping(value = "/stopnames", method = RequestMethod.GET)
+    public String stopnames() {
+        osmService.doOSMStopsNameExtraction();
+        return "/helloSpring";
+    }
+
 
 }

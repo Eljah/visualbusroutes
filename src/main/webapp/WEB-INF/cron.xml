@@ -5,9 +5,14 @@
         <description>Add count + 1 every 1 hours</description>
         <schedule>every 1 minutes</schedule>
     </cron>
-    <!--<cron>
-        <url>/load/findstops</url>
+    <cron>
+        <url>/load/routenames</url>
         <description>Add count + 1 every 1 hours</description>
         <schedule>every 1 minutes</schedule>
-    </cron>-->
+    </cron>
+    <cron>
+        <url>/load/stopnames</url>
+        <description>Add count + 1 every 1 hours</description>
+        <schedule>every 1 minutes</schedule>
+    </cron>
 </cronentries>

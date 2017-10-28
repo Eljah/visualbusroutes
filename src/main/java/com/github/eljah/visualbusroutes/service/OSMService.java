@@ -127,6 +127,7 @@ public class OSMService {
 //                System.out.println(node.getTags().get("name:en"));
                 BusStopToCheck busStopToCheck=new BusStopToCheck();
                 busStopToCheck.setOsmId(node.getId());
+                busStopToCheck.setChecked("0");
                 busStopToCheckRepository.save(busStopToCheck);
             }
         }
@@ -148,100 +149,61 @@ public class OSMService {
         }
     };
 
-//    @Transactional
-//    public void doOSMStopsExtractionFromRoutes() {
-//        //BusRouteToCheck busRouteToCheck = busRouteToCheckRepository.findOneByChecked(false);//busRouteToCheckList.get(0);
-//        //busRouteToCheck.setChecked(true);
-//        //busRouteToCheckRepository.save(busRouteToCheck);
-//        BusRouteToCheck busRouteToCheck=obtainCheckedBusRoute();
-//        Relation bus = getMapDao().getRelation(busRouteToCheck.getOsmId());
-//        List<BusStopToCheck> busStopToCheckList=busRouteToCheck.getBusStopToCheckList();
-//        if (busStopToCheckList==null) {
-//            busStopToCheckList= Lists.newArrayList();
-//        }
-//        for (RelationMember member : bus.getMembers()) {
-//
-//            if (member.getType().equals(Element.Type.NODE)) {
-//
-//                Node stop = getMapDao().getNode(member.getRef());
-//                BusStopToCheck busStopToCheck = new BusStopToCheck();
-//                busStopToCheck.setBusRouteToCheck(busRouteToCheck);
-//                busStopToCheck.setOsmId(stop.getId());
-//                busStopToCheck.setChecked("0");
-//                //this part actually doesn' add nothing to busrouteToCheck object and i'm comfortable with that
-//                //it ssems to be needed to establish the common entity group of particular busRouteToCheck wioth particular BusStopToCheck
-//
-//               //busStopToCheckList.add(busStopToCheck);
-//                busStopToCheckRepository.save(busStopToCheck);
-//            }
-//        }
-//        //busRouteToCheck.setBusStopToCheckList(busStopToCheckList);
-//        busRouteToCheck.setChecked("1");
-//        busRouteToCheckRepository.save(busRouteToCheck);
-//
-//    }
-//
-//    //@Transactional
-//    BusRouteToCheck obtainCheckedBusRoute() {
-//        List<BusRouteToCheck> busRouteToCheckList = busRouteToCheckRepository.findTop1ByChecked("0");
-//
-//        if (busRouteToCheckList != null && busRouteToCheckList.size() > 0) {
-//            BusRouteToCheck busRouteToCheck = busRouteToCheckList.get(0);
-//            Long toRet = busRouteToCheck.getOsmId();
-//            //busRouteToCheck.setChecked("1");
-//            //busRouteToCheckRepository.save(busRouteToCheck);
-//            //busRouteToCheckRepository.delete(busRouteToCheck);
-//            return busRouteToCheck;
-//        } else {
-//            return null;
-//        }
-//    }
-    //System.out.println(member.getRef());
-//                        Node stop = getMapDao().getNode(member.getRef());
-//                        BusStop busStop = busStopRepository.findTopByOsmId(stop.getId());
-//
-//                        System.out.println(stop.getTags().get("name"));
-//                        System.out.println(stop.getTags().get("name:tt"));
-//                        System.out.println(stop.getTags().get("name:en"));
-//                        if (busStop == null) {
-//                            busStop = new BusStop();
-//                            busStop.osmId = stop.getId();
-//                            busStop.name = stop.getTags().get("name");
-//                            busStop.name_en = stop.getTags().get("name:en");
-//                            busStop.name_ru = stop.getTags().get("name:ru");
-//                            busStop.name_tt = stop.getTags().get("name:tt");
-//                            busStopRepository.save(busStop);
-//                        } else {
-//                            BusStop busStop2 = new BusStop();
-//                            busStop2.osmId = stop.getId();
-//                            busStop2.name = stop.getTags().get("name");
-//                            busStop2.name_en = stop.getTags().get("name:en");
-//                            busStop2.name_ru = stop.getTags().get("name:ru");
-//                            busStop2.name_tt = stop.getTags().get("name:tt");
-//                            if (busStop.hashCode() != busStop2.hashCode()) {
-//                                busStop.osmId = stop.getId();
-//                                busStop.name = stop.getTags().get("name");
-//                                busStop.name_en = stop.getTags().get("name:en");
-//                                busStop.name_ru = stop.getTags().get("name:ru");
-//                                busStop.name_tt = stop.getTags().get("name:tt");
-//                                busStopRepository.save(busStop);
-//                            }
-//                        }
+    @Transactional
+    public void doOSMRoutesNameExtraction() {
+        BusRouteToCheck busRouteToCheck=obtainCheckedBusRoute("0");
+        Relation bus = getMapDao().getRelation(busRouteToCheck.getOsmId());
 
+        BusRoute busRoute=new BusRoute();
+        busRoute.setOsmId(bus.getId());
+        busRoute.setName(bus.getTags().get("name"));
+        busRoute.setName_en(bus.getTags().get("name:en"));
+        busRoute.setName_tt(bus.getTags().get("name:tt"));
+        busRoute.setName_ru(bus.getTags().get("name:ru"));
+        busRouteToCheck.setChecked("1");
+        busRouteRepository.save(busRoute);
+        busRouteToCheckRepository.save(busRouteToCheck);
+    }
 
-//                    List<Node> routeNodes = new ArrayList<Node>();
-//                    if (member.getType().equals(Element.Type.WAY)) {
-//                        //System.out.println(member.getRef());
-//                        Way line = getMapDao().getWay(member.getRef());
-//                        for (Long id : line.getNodeIds()) {
-//                            routeNodes.add(getMapDao().getNode(id));
-//                        }
-//
-//                    }
-//                    for (Node id : routeNodes) {
-//                        System.out.println(id.getPosition().getLatitude() + " " + id.getPosition().getLongitude());
-//                        ;
-//                    }
+    BusRouteToCheck obtainCheckedBusRoute(String checkStatus) {
+        List<BusRouteToCheck> busRouteToCheckList = busRouteToCheckRepository.findTop1ByChecked(checkStatus);
+
+        if (busRouteToCheckList != null && busRouteToCheckList.size() > 0) {
+            BusRouteToCheck busRouteToCheck = busRouteToCheckList.get(0);
+            Long toRet = busRouteToCheck.getOsmId();
+            return busRouteToCheck;
+        } else {
+            return null;
+        }
+    }
+
+    @Transactional
+    public void doOSMStopsNameExtraction() {
+        BusStopToCheck busStopToCheck=obtainCheckedBusStop("0");
+        Node stop = getMapDao().getNode(busStopToCheck.getOsmId());
+
+        BusStop busStop=new BusStop();
+        busStop.setOsmId(stop.getId());
+        busStop.setName(stop.getTags().get("name"));
+        busStop.setName_en(stop.getTags().get("name:en"));
+        busStop.setName_tt(stop.getTags().get("name:tt"));
+        busStop.setName_ru(stop.getTags().get("name:ru"));
+        busStopToCheck.setChecked("1");
+        busStopRepository.save(busStop);
+        busStopToCheckRepository.save(busStopToCheck);
+    }
+
+    BusStopToCheck obtainCheckedBusStop(String checkStatus) {
+        List<BusStopToCheck> busStopToCheckList = busStopToCheckRepository.findTop1ByChecked(checkStatus);
+
+        if (busStopToCheckList != null && busStopToCheckList.size() > 0) {
+            BusStopToCheck busStopToCheck = busStopToCheckList.get(0);
+            Long toRet = busStopToCheck.getOsmId();
+            return busStopToCheck;
+        } else {
+            return null;
+        }
+    }
 
 
     public MapDataDao getMapDao() {
