@@ -164,6 +164,7 @@ public class OSMService {
         busRouteToCheckRepository.save(busRouteToCheck);
     }
 
+    @Transactional
     BusRouteToCheck obtainCheckedBusRoute(String checkStatus) {
         List<BusRouteToCheck> busRouteToCheckList = busRouteToCheckRepository.findTop1ByChecked(checkStatus);
 

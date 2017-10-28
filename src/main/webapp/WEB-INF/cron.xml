@@ -15,4 +15,9 @@
         <description>Add count + 1 every 1 hours</description>
         <schedule>every 1 minutes</schedule>
     </cron>
+    <cron>
+        <url>/load/routestops</url>
+        <description>Add count + 1 every 1 hours</description>
+        <schedule>every 1 minutes</schedule>
+    </cron>
 </cronentries>
