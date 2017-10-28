@@ -195,10 +195,10 @@ public class OSMService {
     @Transactional
     public void doOSMRoutesStopsExtraction() {
         BusRouteToCheck busRouteToCheck = obtainCheckedBusRoute("1");
-        BusRoute busRoute=busRouteRepository.findByIdOsm(busRouteToCheck.getOsmId());
+        BusRoute busRoute = busRouteRepository.findByIdOsm(busRouteToCheck.getOsmId());
         Relation bus = getMapDao().getRelation(busRouteToCheck.getOsmId());
-        List<BusStop> busStopList=new ArrayList<>();
-        List<Long> busStopsNodeIds=new ArrayList<>();
+        List<BusStop> busStopList = new ArrayList<>();
+        List<Long> busStopsNodeIds = new ArrayList<>();
         for (RelationMember member : bus.getMembers()) {
             if (member.getType().equals(Element.Type.WAY)) {
                 Way line = getMapDao().getWay(member.getRef());
@@ -206,8 +206,7 @@ public class OSMService {
                     //routeNodes.add(getMapDao().getNode(id));
                     Node node = getMapDao().getNode(id);
                     if (node.getTags() != null && node.getTags().get("highway") != null && node.getTags().get("highway").equals("bus_stop")) {
-                        //BusStop busStop=busStopRepository.findByIdOsm(id);
-                        //busStopList.add(busStop);
+                        System.out.println("Bus stop osm id " + id);
                         busStopsNodeIds.add(id);
                     }
                 }
@@ -216,16 +215,19 @@ public class OSMService {
 
             //busRouteToCheckRepository.save(busRouteToCheck);
         }
-        //busStopsNodeIds.add(991254408l);
-        //busStopsNodeIds.add(1027869964l);
-        busStopList=busStopRepository.findByIdOsmIn(busStopsNodeIds);
-        for (BusStop bs: busStopList)
-        {
-            System.out.println("BS"+bs.getName());
-            busRoute.getBusStopList().add(bs);
+        for (Long bs : busStopsNodeIds) {
+            System.out.println("BS" + bs);
         }
-        busRouteToCheck.setChecked("2");
-        busRouteRepository.save(busRoute);
+
+        if (busStopsNodeIds.size() > 0) {
+
+            busStopList = busStopRepository.findByIdOsmIn(busStopsNodeIds);
+            for (BusStop bs : busStopList) {
+                busRoute.getBusStopList().add(bs);
+            }
+            busRouteToCheck.setChecked("2");
+            busRouteRepository.save(busRoute);
+        }
     }
 
     BusStopToCheck obtainCheckedBusStop(String checkStatus) {
