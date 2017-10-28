@@ -2,7 +2,6 @@ package com.github.eljah.visualbusroutes.domain;
 
 import com.google.appengine.datanucleus.annotations.Unowned;
 
-import javax.jdo.annotations.PersistenceCapable;
 import javax.persistence.*;
 import java.util.List;
 
@@ -14,18 +13,18 @@ import java.util.List;
 public class BusStop extends BaseEntity {
 
     //@Column(unique = true)
-    public Long osmId;
+    public Long idOsm;
     public String name;
     public String name_ru;
     public String name_tt;
     public String name_en;
 
-    public Long getOsmId() {
-        return osmId;
+    public Long getIdOsm() {
+        return idOsm;
     }
 
-    public void setOsmId(Long osmId) {
-        this.osmId = osmId;
+    public void setIdOsm(Long idOsm) {
+        this.idOsm = idOsm;
     }
 
     public String getName() {
@@ -69,12 +68,17 @@ public class BusStop extends BaseEntity {
     }
 
     @Unowned
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "busRouteList")
+    //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "busRouteList")
     List<BusRoute> busRoutes;
 
     @Override
     public int hashCode()
     {
-        return osmId.hashCode()+name.hashCode()+name_en.hashCode()+name_tt.hashCode()+name_ru.hashCode();
+        Long h_idOsm = idOsm !=null ? idOsm : 0l;
+        String h_name = name !=null ? name : "";
+        String h_name_en = name_en !=null ? name_en : "";
+        String h_name_tt = name_tt !=null ? name_tt : "";
+        String h_name_ru = name_ru !=null ? name_ru : "";
+        return h_idOsm.hashCode()+h_name.hashCode()+h_name_en.hashCode()+h_name_tt.hashCode()+h_name_ru.hashCode();
     }
 }

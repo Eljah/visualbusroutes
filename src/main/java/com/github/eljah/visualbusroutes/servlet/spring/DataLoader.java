@@ -42,5 +42,11 @@ public class DataLoader {
         return "/helloSpring";
     }
 
+    @RequestMapping(value = "/routestops", method = RequestMethod.GET)
+    public String routestops() {
+        osmService.doOSMRoutesStopsExtraction();
+        return "/helloSpring";
+    }
+
 
 }

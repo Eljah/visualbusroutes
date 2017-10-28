@@ -2,9 +2,6 @@ package com.github.eljah.visualbusroutes.domain;
 
 import com.google.appengine.datanucleus.annotations.Unowned;
 
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Unique;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.util.List;
 
@@ -15,14 +12,14 @@ import java.util.List;
 @Entity
 public class BusRoute extends BaseEntity {
     //@Column(unique = true)
-    public Long osmId;
+    public Long idOsm;
     public String name;
     public String name_ru;
     public String name_tt;
     public String name_en;
 
     @Unowned
-    List<BusRoute> busRouteList;
+    List<BusStop> busStopList;
 
     public String getName() {
         return name;
@@ -56,20 +53,20 @@ public class BusRoute extends BaseEntity {
         this.name_en = name_en;
     }
 
-    public List<BusRoute> getBusRouteList() {
-        return busRouteList;
+    public List<BusStop> getBusStopList() {
+        return busStopList;
     }
 
-    public void setBusRouteList(List<BusRoute> busRouteList) {
-        this.busRouteList = busRouteList;
+    public void setBusStopList(List<BusStop> busStopList) {
+        this.busStopList = busStopList;
     }
 
-    public Long getOsmId() {
-        return osmId;
+    public Long getIdOsm() {
+        return idOsm;
     }
 
-    public void setOsmId(Long osmId) {
-        this.osmId = osmId;
+    public void setIdOsm(Long idOsm) {
+        this.idOsm = idOsm;
     }
 
 
