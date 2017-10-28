@@ -13,9 +13,9 @@ import java.util.List;
  * Created by eljah32 on 10/22/2017.
  */
 @Entity
-public class BusRouteToCheck extends BaseEntity {
+public class BusRouteToCheck {
     //@Column(unique = true)
-    //@Id
+    @Id
     Long osmId;
     String checked;
 

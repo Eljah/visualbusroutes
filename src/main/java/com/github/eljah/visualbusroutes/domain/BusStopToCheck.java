@@ -9,8 +9,8 @@ import javax.persistence.ManyToOne;
  * Created by eljah32 on 10/22/2017.
  */
 @Entity
-public class BusStopToCheck extends BaseEntity {
-    //@Id
+public class BusStopToCheck {
+    @Id
     Long osmId;
     String checked;
 
