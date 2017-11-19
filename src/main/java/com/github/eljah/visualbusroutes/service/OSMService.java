@@ -145,7 +145,7 @@ public class OSMService {
 
         public void handle(Relation relation) {
             if (relation.getTags().get("type").equals("route")) {
-                if (relation.getTags().get("route").equals("bus")) {
+                if (relation.getTags().get("route").equals("bus")||relation.getTags().get("route").equals("trolleybus")||relation.getTags().get("route").equals("tram")) {
                     System.out.println(relation.getTags().get("name"));
                     BusRouteToCheck busRouteToCheck = new BusRouteToCheck();
                     busRouteToCheck.setChecked("0");
