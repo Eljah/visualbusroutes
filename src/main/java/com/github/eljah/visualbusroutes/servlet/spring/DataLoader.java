@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 import static com.google.appengine.repackaged.com.google.common.base.Strings.nullToEmpty;
 
 /**
@@ -45,7 +47,10 @@ public class DataLoader {
     @RequestMapping(value = "/routestops", method = RequestMethod.GET)
     public String routestops() {
         Long busRouteToCheckId = osmService.obtainCheckedBusRouteOsmId("1");
-        Long weUpdate=osmService.doOSMRoutesStopsExtraction(busRouteToCheckId);
+        List<Long> busStopsNodeIds=osmService.busStopsNodeIds(busRouteToCheckId);
+        Long count=osmService.getCountOfOsmIdsExisted(busStopsNodeIds);
+        Long weUpdate=osmService.saveOSMRoutesStopsExtraction(busRouteToCheckId,count,busStopsNodeIds);
+        //Long weUpdate=osmService.doOSMRoutesStopsExtraction(busRouteToCheckId);
         if (weUpdate!=null){osmService.setBusRouteStatus2(weUpdate);};
         return "/helloSpring";
     }

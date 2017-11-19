@@ -252,9 +252,8 @@ public class OSMService {
             for (BusStop bs : busStopList) {
                 busRoute.getBusStopList().add(bs);
             }
+            busRouteRepository.save(busRoute);
             return busRouteToCheckId;
-
-            //busRouteRepository.save(busRoute);
         }
         else
         {
@@ -263,15 +262,77 @@ public class OSMService {
         //busRouteToCheckRepository.save(busRouteToCheck);
     }
 
+    //@Transactional("transactionManager")
+    public List<Long> busStopsNodeIds(Long busRouteToCheckId) {
+        //BusRouteToCheck busRouteToCheck = obtainCheckedBusRoute("1");
+        //Long busRouteToCheckId = obtainCheckedBusRouteOsmId("1");
+        //BusRoute busRoute = busRouteRepository.findByOsmId(busRouteToCheck.getOsmId());
+        Relation bus = getMapDao().getRelation(busRouteToCheckId);
+        List<Long> busStopsNodeIds = new ArrayList<>();
+        //todo remove
+        //busStopsNodeIds.add(991254408l);
+        //busStopsNodeIds.add(1027869964l);
+        for (RelationMember member : bus.getMembers()) {
+//            if (member.getType().equals(Element.Type.WAY)) {
+//                Way line = getMapDao().getWay(member.getRef());
+//                for (Long id : line.getNodeIds()) {
+//                    //routeNodes.add(getMapDao().getNode(id));
+//                    Node node = getMapDao().getNode(id);
+//                    if (node.getTags() != null && node.getTags().get("highway") != null && node.getTags().get("highway").equals("bus_stop")) {
+//                        System.out.println("Bus stop osm id " + id);
+//                        busStopsNodeIds.add(id);
+//                    }
+//                }
+//            }
+            if (member.getType().equals(Element.Type.NODE)) {
+                //Node node = getMapDao().getNode(member.getRef());
+                //if (node.getTags() != null && node.getTags().get("highway") != null && node.getTags().get("highway").equals("bus_stop")) {
+                System.out.println("Bus stop osm id " + member.getRef());
+                busStopsNodeIds.add(member.getRef());
+                //}
+            }
+        }
+        for (Long bs : busStopsNodeIds) {
+            System.out.println("BS" + bs);
+        }
+        return  busStopsNodeIds;
+    }
+
+    public Long getCountOfOsmIdsExisted(List<Long> busStopsNodeIds)
+    {
+        Long toBeReturned=busStopsDao.countByOsmIds(busStopsNodeIds);
+        System.out.println("COUNT"+toBeReturned);
+        return toBeReturned;
+    }
+
+    @Transactional("transactionManager")
+    public Long saveOSMRoutesStopsExtraction(Long busRouteToCheckId, Long countOfOsmIdsExisted, List<Long> busStopsNodeIds) {
+        BusRoute busRoute = busRouteRepository.findTop1ByOsmId(busRouteToCheckId).get(0);
+        //List<BusStop> busStopList = new ArrayList<>();
+        //System.out.println("COUNT1 "+busStopsNodeIds.size());
+        //System.out.println("COUNT2 "+countOfOsmIdsExisted);
+        if (busStopsNodeIds.size() == countOfOsmIdsExisted) {
+            for (Long bs : busStopsNodeIds) {
+                busRoute.getBusStopList().add(busStopRepository.findByOsmId(bs));
+            }
+            busRouteRepository.save(busRoute);
+            return busRouteToCheckId;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     @Transactional("transactionManager2")
     public void setBusRouteStatus2(Long id)
     {
         BusRouteToCheck busRouteToCheck=busRouteToCheckRepository.findOneByOsmId(id);
-        System.out.println("1=1"+NucleusJPAHelper.getObjectState(busRouteToCheck));
+        //System.out.println("1=1"+NucleusJPAHelper.getObjectState(busRouteToCheck));
         busRouteToCheck.setChecked("2");
-        System.out.println("1=2"+NucleusJPAHelper.getObjectState(busRouteToCheck));
+        //System.out.println("1=2"+NucleusJPAHelper.getObjectState(busRouteToCheck));
         busRouteToCheckRepository.save(busRouteToCheck);
-        System.out.println("1=3"+NucleusJPAHelper.getObjectState(busRouteToCheck));
+        //System.out.println("1=3"+NucleusJPAHelper.getObjectState(busRouteToCheck));
     }
 
 
