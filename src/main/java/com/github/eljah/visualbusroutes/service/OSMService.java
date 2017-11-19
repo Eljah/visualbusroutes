@@ -36,8 +36,8 @@ public class OSMService {
     double LONGITUDE_STOP = 49.261698;
     double LATITUDE_STOP = 55.897801;
 
-    double LONGITUDE_STEP = 0.005; //0.02
-    double LATITUDE_STEP = 0.005; //0.02
+    double LONGITUDE_STEP = 0.02; //0.02 0.005
+    double LATITUDE_STEP = 0.02; //0.02 0.005
 
     double LONGITUDE_CURRENT = 48.833744;
     double LATITUDE_CURRENT = 55.693307;
@@ -107,6 +107,7 @@ public class OSMService {
         System.out.println("Megacycles quota lost" + (after - befor));
     }
 
+
     public void doOSMRoutesAndStopsExtraction() {
 
         OsmLatLon min = new OsmLatLon(LATITUDE_CURRENT, LONGITUDE_CURRENT);
@@ -133,9 +134,13 @@ public class OSMService {
 //                System.out.println(node.getTags().get("name:tt"));
 //                System.out.println(node.getTags().get("name:ru"));
 //                System.out.println(node.getTags().get("name:en"));
-                BusStopToCheck busStopToCheck = new BusStopToCheck();
+                BusStopToCheck busStopToCheck;
+                busStopToCheck=busStopToCheckRepository.findOne(node.getId());
+                if (busStopToCheck==null) {
+                    busStopToCheck = new BusStopToCheck();
+                    busStopToCheck.setChecked("0");
+                }
                 busStopToCheck.setOsmId(node.getId());
-                busStopToCheck.setChecked("0");
                 busStopToCheckRepository.save(busStopToCheck);
             }
         }
@@ -147,8 +152,13 @@ public class OSMService {
             if (relation.getTags().get("type").equals("route")) {
                 if (relation.getTags().get("route").equals("bus")||relation.getTags().get("route").equals("trolleybus")||relation.getTags().get("route").equals("tram")) {
                     System.out.println(relation.getTags().get("name"));
-                    BusRouteToCheck busRouteToCheck = new BusRouteToCheck();
-                    busRouteToCheck.setChecked("0");
+                    BusRouteToCheck busRouteToCheck;
+                    busRouteToCheck=busRouteToCheckRepository.findOne(relation.getId());
+                    if (busRouteToCheck==null)
+                    {
+                        busRouteToCheck=new BusRouteToCheck();
+                        busRouteToCheck.setChecked("0");
+                    }
                     busRouteToCheck.setOsmId(relation.getId());
                     busRouteToCheckRepository.save(busRouteToCheck);
                     //busRoutes.put(relation.getTags().get("name"), relation);
@@ -284,7 +294,7 @@ public class OSMService {
 //                    }
 //                }
 //            }
-            if (member.getType().equals(Element.Type.NODE)) {
+            if (member.getType().equals(Element.Type.NODE)&&member.getRole().contains("stop")||member.getType().equals(Element.Type.NODE)&&member.getRole().contains("platform")) {
                 //Node node = getMapDao().getNode(member.getRef());
                 //if (node.getTags() != null && node.getTags().get("highway") != null && node.getTags().get("highway").equals("bus_stop")) {
                 System.out.println("Bus stop osm id " + member.getRef());
@@ -309,8 +319,8 @@ public class OSMService {
     public Long saveOSMRoutesStopsExtraction(Long busRouteToCheckId, Long countOfOsmIdsExisted, List<Long> busStopsNodeIds) {
         BusRoute busRoute = busRouteRepository.findTop1ByOsmId(busRouteToCheckId).get(0);
         //List<BusStop> busStopList = new ArrayList<>();
-        //System.out.println("COUNT1 "+busStopsNodeIds.size());
-        //System.out.println("COUNT2 "+countOfOsmIdsExisted);
+        System.out.println("COUNT1 "+busStopsNodeIds.size());
+        System.out.println("COUNT2 "+countOfOsmIdsExisted);
         if (busStopsNodeIds.size() == countOfOsmIdsExisted) {
             for (Long bs : busStopsNodeIds) {
                 busRoute.getBusStopList().add(busStopRepository.findByOsmId(bs));

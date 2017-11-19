@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by eljah32 on 10/30/2017.
@@ -33,6 +34,21 @@ public class BusRoutesToCheckDao {
     }
 
     public Long findOsmIdByChecked(String checked) {
+        List values=entityManager.createQuery("select s.osmId from BusRouteToCheck s where s.checked =:checked")
+                .setParameter("checked",checked).getResultList();
+        int size=values.size();
+
+        Long toBereturned= (Long) values.get(ThreadLocalRandom.current().nextInt(0, size));
+        entityManager.clear();
+        //entityManager.flush();
+        entityManager.close();
+        //entityManager.
+        //entityManager.getTransaction().commit();
+        //entityManager.
+        return toBereturned;
+    }
+
+    public Long findOsmIdByCheckedAkwaysFirst(String checked) {
         Long toBereturned= (Long) entityManager.createQuery("select s.osmId from BusRouteToCheck s where s.checked =:checked")
                 .setParameter("checked",checked).setMaxResults(1).getResultList().get(0);
         entityManager.clear();

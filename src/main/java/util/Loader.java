@@ -18,24 +18,25 @@ public class Loader {
                 System.out.println(con.getResponseCode());
                 con.disconnect();
 
-                obj = new URL("http://localhost:8080/load/routenames");
-                con = (HttpURLConnection) obj.openConnection();
-                con.setRequestMethod("GET");
-                System.out.println(con.getResponseCode());
-                con.disconnect();
+                for (int j=0;j<10;j++) {
+                    obj = new URL("http://localhost:8080/load/routenames");
+                    con = (HttpURLConnection) obj.openConnection();
+                    con.setRequestMethod("GET");
+                    System.out.println(con.getResponseCode());
+                    con.disconnect();
 
-                obj = new URL("http://localhost:8080/load/stopnames");
-                con = (HttpURLConnection) obj.openConnection();
-                con.setRequestMethod("GET");
-                System.out.println(con.getResponseCode());
-                con.disconnect();
+                    obj = new URL("http://localhost:8080/load/stopnames");
+                    con = (HttpURLConnection) obj.openConnection();
+                    con.setRequestMethod("GET");
+                    System.out.println(con.getResponseCode());
+                    con.disconnect();
 
-                obj = new URL("http://localhost:8080/load/routestops");
-                con = (HttpURLConnection) obj.openConnection();
-                con.setRequestMethod("GET");
-                System.out.println(con.getResponseCode());
-                con.disconnect();
-
+                    obj = new URL("http://localhost:8080/load/routestops");
+                    con = (HttpURLConnection) obj.openConnection();
+                    con.setRequestMethod("GET");
+                    System.out.println(con.getResponseCode());
+                    con.disconnect();
+                }
                 System.out.println(i);
                 i++;
             }
