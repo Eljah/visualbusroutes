@@ -1,9 +1,12 @@
 package com.github.eljah.visualbusroutes.service;
 
+import com.github.eljah.visualbusroutes.dao.BusRoutesToCheckDao;
+import com.github.eljah.visualbusroutes.dao.BusStopsDao;
 import com.github.eljah.visualbusroutes.domain.*;
 import com.github.eljah.visualbusroutes.repository.*;
 import com.google.appengine.api.quota.QuotaService;
 import com.google.appengine.api.quota.QuotaServiceFactory;
+import org.datanucleus.api.jpa.NucleusJPAHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,7 @@ import java.util.List;
  * Created by eljah32 on 10/22/2017.
  */
 @Service
-//@Transactional
+//@Transactional("transactionManager")("transactionManager")("transactionManager")("transactionManager")
 public class OSMService {
     double LONGITUDE_START_CENTER = 49.121007;
     double LATITUDE_START_CENTER = 55.787365;
@@ -50,6 +53,12 @@ public class OSMService {
     private BusStopToCheckRepository busStopToCheckRepository;
     @Autowired
     private CurrentScanCoordinatesRepository currentScanCoordinatesRepository;
+
+    @Autowired
+    private BusStopsDao busStopsDao;
+
+    @Autowired
+    private BusRoutesToCheckDao busRoutesToCheckDao;
 
     //@Autowired
     //private JpaContext jpaContext;
@@ -148,13 +157,13 @@ public class OSMService {
         }
     };
 
-    @Transactional
+    @Transactional("transactionManager")
     public void doOSMRoutesNameExtraction() {
         BusRouteToCheck busRouteToCheck = obtainCheckedBusRoute("0");
         Relation bus = getMapDao().getRelation(busRouteToCheck.getOsmId());
 
         BusRoute busRoute = new BusRoute();
-        busRoute.setIdOsm(bus.getId());
+        busRoute.setOsmId(bus.getId());
         busRoute.setName(bus.getTags().get("name"));
         busRoute.setName_en(bus.getTags().get("name:en"));
         busRoute.setName_tt(bus.getTags().get("name:tt"));
@@ -164,7 +173,7 @@ public class OSMService {
         busRouteToCheckRepository.save(busRouteToCheck);
     }
 
-    @Transactional
+    @Transactional(value = "transactionManager",readOnly = true)
     BusRouteToCheck obtainCheckedBusRoute(String checkStatus) {
         List<BusRouteToCheck> busRouteToCheckList = busRouteToCheckRepository.findTop1ByChecked(checkStatus);
 
@@ -177,13 +186,19 @@ public class OSMService {
         }
     }
 
-    @Transactional
+    //@Transactional(value = "transactionManager2",readOnly = true)
+    public Long obtainCheckedBusRouteOsmId(String checkStatus) {
+        return busRoutesToCheckDao.findOsmIdByChecked(checkStatus);
+    }
+
+
+    @Transactional("transactionManager")
     public void doOSMStopsNameExtraction() {
         BusStopToCheck busStopToCheck = obtainCheckedBusStop("0");
         Node stop = getMapDao().getNode(busStopToCheck.getOsmId());
 
         BusStop busStop = new BusStop();
-        busStop.setIdOsm(stop.getId());
+        busStop.setOsmId(stop.getId());
         busStop.setName(stop.getTags().get("name"));
         busStop.setName_en(stop.getTags().get("name:en"));
         busStop.setName_tt(stop.getTags().get("name:tt"));
@@ -193,43 +208,72 @@ public class OSMService {
         busStopToCheckRepository.save(busStopToCheck);
     }
 
-    @Transactional
-    public void doOSMRoutesStopsExtraction() {
-        BusRouteToCheck busRouteToCheck = obtainCheckedBusRoute("1");
-        BusRoute busRoute = busRouteRepository.findByIdOsm(busRouteToCheck.getOsmId());
-        Relation bus = getMapDao().getRelation(busRouteToCheck.getOsmId());
+
+
+    //@Transactional("transactionManager")
+    public Long doOSMRoutesStopsExtraction(Long busRouteToCheckId) {
+        //BusRouteToCheck busRouteToCheck = obtainCheckedBusRoute("1");
+        //Long busRouteToCheckId = obtainCheckedBusRouteOsmId("1");
+        //BusRoute busRoute = busRouteRepository.findByOsmId(busRouteToCheck.getOsmId());
+        BusRoute busRoute = busRouteRepository.findTop1ByOsmId(busRouteToCheckId).get(0);
+        Relation bus = getMapDao().getRelation(busRouteToCheckId);
         List<BusStop> busStopList = new ArrayList<>();
         List<Long> busStopsNodeIds = new ArrayList<>();
+        //todo remove
+        //busStopsNodeIds.add(991254408l);
+        //busStopsNodeIds.add(991271671l);
         for (RelationMember member : bus.getMembers()) {
-            if (member.getType().equals(Element.Type.WAY)) {
-                Way line = getMapDao().getWay(member.getRef());
-                for (Long id : line.getNodeIds()) {
-                    //routeNodes.add(getMapDao().getNode(id));
-                    Node node = getMapDao().getNode(id);
-                    if (node.getTags() != null && node.getTags().get("highway") != null && node.getTags().get("highway").equals("bus_stop")) {
-                        System.out.println("Bus stop osm id " + id);
-                        busStopsNodeIds.add(id);
-                    }
-                }
-
+//            if (member.getType().equals(Element.Type.WAY)) {
+//                Way line = getMapDao().getWay(member.getRef());
+//                for (Long id : line.getNodeIds()) {
+//                    //routeNodes.add(getMapDao().getNode(id));
+//                    Node node = getMapDao().getNode(id);
+//                    if (node.getTags() != null && node.getTags().get("highway") != null && node.getTags().get("highway").equals("bus_stop")) {
+//                        System.out.println("Bus stop osm id " + id);
+//                        busStopsNodeIds.add(id);
+//                    }
+//                }
+//            }
+            if (member.getType().equals(Element.Type.NODE)) {
+                //Node node = getMapDao().getNode(member.getRef());
+                //if (node.getTags() != null && node.getTags().get("highway") != null && node.getTags().get("highway").equals("bus_stop")) {
+                    System.out.println("Bus stop osm id " + member.getRef());
+                    busStopsNodeIds.add(member.getRef());
+                //}
             }
-
-            //busRouteToCheckRepository.save(busRouteToCheck);
         }
         for (Long bs : busStopsNodeIds) {
             System.out.println("BS" + bs);
         }
 
         if (busStopsNodeIds.size() > 0) {
-
-            busStopList = busStopRepository.findByIdOsmIn(busStopsNodeIds);
+            //busStopList = busStopRepository.findByOsmIdIn(busStopsNodeIds);
+            busStopsDao.countByOsmIds(busStopsNodeIds);
             for (BusStop bs : busStopList) {
                 busRoute.getBusStopList().add(bs);
             }
-            busRouteToCheck.setChecked("2");
-            busRouteRepository.save(busRoute);
+            return busRouteToCheckId;
+
+            //busRouteRepository.save(busRoute);
         }
+        else
+        {
+            return null;
+        }
+        //busRouteToCheckRepository.save(busRouteToCheck);
     }
+
+    @Transactional("transactionManager2")
+    public void setBusRouteStatus2(Long id)
+    {
+        BusRouteToCheck busRouteToCheck=busRouteToCheckRepository.findOneByOsmId(id);
+        System.out.println("1=1"+NucleusJPAHelper.getObjectState(busRouteToCheck));
+        busRouteToCheck.setChecked("2");
+        System.out.println("1=2"+NucleusJPAHelper.getObjectState(busRouteToCheck));
+        busRouteToCheckRepository.save(busRouteToCheck);
+        System.out.println("1=3"+NucleusJPAHelper.getObjectState(busRouteToCheck));
+    }
+
 
     BusStopToCheck obtainCheckedBusStop(String checkStatus) {
         List<BusStopToCheck> busStopToCheckList = busStopToCheckRepository.findTop1ByChecked(checkStatus);

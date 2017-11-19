@@ -36,7 +36,8 @@ public class SpringBeans {
 			//datanucleus.DetachAllOnCommit true
 			//datanucleus.detachedState all
 			put("datanucleus.DetachAllOnCommit", "true");
-			put("datanucleus.detachedState", "all");
+			put("datanucleus.detachOnClose","true");
+			//put("datanucleus.detachedState", "all");
 			put("datanucleus.NontransactionalRead", "true");
 			put("datanucleus.appengine.datastoreEnableXGTransactions", "true");
 			put("datanucleus.NontransactionalWrite", "true");
@@ -50,13 +51,20 @@ public class SpringBeans {
 		entityManagerFactoryBean.setPersistenceProviderClass(PersistenceProviderImpl.class);
 		entityManagerFactoryBean.setPackagesToScan("com.github.eljah.visualbusroutes");
 		entityManagerFactoryBean.setLoadTimeWeaver(loadTimeWeaver());
-		entityManagerFactoryBean.afterPropertiesSet();
+        entityManagerFactoryBean.afterPropertiesSet();
 		EntityManagerFactory result = entityManagerFactoryBean.getObject();
 		return result;
 	}
 
 	@Bean @Autowired
 	public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+		JpaTransactionManager txManager = new JpaTransactionManager();
+		txManager.setEntityManagerFactory(entityManagerFactory);
+		return txManager;
+	}
+
+	@Bean @Autowired
+	public PlatformTransactionManager transactionManager2(EntityManagerFactory entityManagerFactory) {
 		JpaTransactionManager txManager = new JpaTransactionManager();
 		txManager.setEntityManagerFactory(entityManagerFactory);
 		return txManager;

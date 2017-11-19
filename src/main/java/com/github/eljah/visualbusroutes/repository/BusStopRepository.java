@@ -10,8 +10,8 @@ import java.util.List;
 /**
  * Created by eljah32 on 10/22/2017.
  */
-public interface BusStopRepository extends CustomRepository<BusStop,Key> {
-    BusStop findByIdOsm(Long id);
+public interface BusStopRepository extends CustomRepository<BusStop,Long> {
+    BusStop findByOsmId(Long id);
     //@Query()
-    List<BusStop> findByIdOsmIn(List<Long> ids);
+    List<BusStop> findByOsmIdIn(List<Long> ids);
 }

@@ -2,17 +2,21 @@ package com.github.eljah.visualbusroutes.domain;
 
 import com.google.appengine.datanucleus.annotations.Unowned;
 
-import javax.persistence.Entity;
+
+import javax.persistence.*;
 import java.util.List;
+
 
 /**
  * Created by eljah32 on 10/22/2017.
  */
 
 @Entity
-public class BusRoute extends BaseEntity {
+public class BusRoute
+{
     //@Column(unique = true)
-    public Long idOsm;
+    @Id
+    public Long osmId;
     public String name;
     public String name_ru;
     public String name_tt;
@@ -61,12 +65,12 @@ public class BusRoute extends BaseEntity {
         this.busStopList = busStopList;
     }
 
-    public Long getIdOsm() {
-        return idOsm;
+    public Long getOsmId() {
+        return osmId;
     }
 
-    public void setIdOsm(Long idOsm) {
-        this.idOsm = idOsm;
+    public void setOsmId(Long osmId) {
+        this.osmId = osmId;
     }
 
 

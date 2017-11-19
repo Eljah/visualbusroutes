@@ -10,6 +10,8 @@ import java.util.List;
 /**
  * Created by eljah32 on 10/22/2017.
  */
-public interface BusStopToCheckRepository extends CustomRepository<BusStopToCheck,Key> {
+public interface BusStopToCheckRepository extends CustomRepository<BusStopToCheck,Long> {
     List<BusStopToCheck> findTop1ByChecked(String checked);
+    List<Long> findTop1OsmIdByChecked(String checked);
+
 }

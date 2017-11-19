@@ -3,6 +3,7 @@ package com.github.eljah.visualbusroutes.dao;
 import com.github.eljah.visualbusroutes.domain.Student;
 import com.google.appengine.api.datastore.Key;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -22,6 +23,7 @@ import java.util.List;
  */
 @Repository
 public class StudentDao {
+	@Qualifier("transactionManager2")
 	@Autowired private PlatformTransactionManager txManager;
 	@PersistenceContext private EntityManager entityManager;
 

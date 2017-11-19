@@ -10,21 +10,21 @@ import java.util.List;
  */
 
 @Entity
-public class BusStop extends BaseEntity {
-
-    //@Column(unique = true)
-    public Long idOsm;
+public class BusStop
+{
+    @Id
+    public Long osmId;
     public String name;
     public String name_ru;
     public String name_tt;
     public String name_en;
 
-    public Long getIdOsm() {
-        return idOsm;
+    public Long getOsmId() {
+        return osmId;
     }
 
-    public void setIdOsm(Long idOsm) {
-        this.idOsm = idOsm;
+    public void setOsmId(Long osmId) {
+        this.osmId = osmId;
     }
 
     public String getName() {
@@ -74,7 +74,7 @@ public class BusStop extends BaseEntity {
     @Override
     public int hashCode()
     {
-        Long h_idOsm = idOsm !=null ? idOsm : 0l;
+        Long h_idOsm = osmId !=null ? osmId : 0l;
         String h_name = name !=null ? name : "";
         String h_name_en = name_en !=null ? name_en : "";
         String h_name_tt = name_tt !=null ? name_tt : "";

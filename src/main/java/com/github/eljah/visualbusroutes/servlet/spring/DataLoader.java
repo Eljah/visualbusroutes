@@ -44,7 +44,9 @@ public class DataLoader {
 
     @RequestMapping(value = "/routestops", method = RequestMethod.GET)
     public String routestops() {
-        osmService.doOSMRoutesStopsExtraction();
+        Long busRouteToCheckId = osmService.obtainCheckedBusRouteOsmId("1");
+        Long weUpdate=osmService.doOSMRoutesStopsExtraction(busRouteToCheckId);
+        if (weUpdate!=null){osmService.setBusRouteStatus2(weUpdate);};
         return "/helloSpring";
     }
 
