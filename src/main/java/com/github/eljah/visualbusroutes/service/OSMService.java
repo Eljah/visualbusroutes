@@ -32,9 +32,9 @@ public class OSMService {
 
 
     double LONGITUDE_START = 48.833744;
-    double LATITUDE_START = 55.693307;
-    double LONGITUDE_STOP = 49.261698;
-    double LATITUDE_STOP = 55.897801;
+    double LATITUDE_START = 55.613307;
+    double LONGITUDE_STOP = 49.351698;
+    double LATITUDE_STOP = 55.957801;
 
     double LONGITUDE_STEP = 0.02; //0.02 0.005
     double LATITUDE_STEP = 0.02; //0.02 0.005
@@ -129,7 +129,7 @@ public class OSMService {
         }
 
         public void handle(Node node) {
-            if (node.getTags() != null && node.getTags().get("highway") != null && node.getTags().get("highway").equals("bus_stop")) {
+            if (node.getTags() != null && node.getTags().get("highway") != null && node.getTags().get("highway").contains("bus_stop")||node.getTags() != null && node.getTags().get("public_transport") != null && node.getTags().get("public_transport").contains("stop_position")||node.getTags() != null && node.getTags().get("public_transport") != null && node.getTags().get("public_transport").contains("platform")||node.getTags() != null && node.getTags().get("was:highway") != null && node.getTags().get("was:highway").contains("bus_stop")||node.getTags() != null && node.getTags().get("was:public_transport") != null && node.getTags().get("was:public_transport").contains("stop_position")||node.getTags() != null && node.getTags().get("was:public_transport") != null && node.getTags().get("was:public_transport").contains("platform")) {
 //                System.out.println(node.getTags().get("name"));
 //                System.out.println(node.getTags().get("name:tt"));
 //                System.out.println(node.getTags().get("name:ru"));
@@ -319,6 +319,8 @@ public class OSMService {
     public Long saveOSMRoutesStopsExtraction(Long busRouteToCheckId, Long countOfOsmIdsExisted, List<Long> busStopsNodeIds) {
         BusRoute busRoute = busRouteRepository.findTop1ByOsmId(busRouteToCheckId).get(0);
         //List<BusStop> busStopList = new ArrayList<>();
+        System.out.println("ROUTE "+busRoute.getOsmId());
+        System.out.println("ROUTE "+busRoute.getName());
         System.out.println("COUNT1 "+busStopsNodeIds.size());
         System.out.println("COUNT2 "+countOfOsmIdsExisted);
         if (busStopsNodeIds.size() == countOfOsmIdsExisted) {
