@@ -1,6 +1,7 @@
 package com.github.eljah.visualbusroutes.servlet.spring;
 
 import com.github.eljah.visualbusroutes.service.OSMService;
+import com.google.appengine.api.datastore.Key;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -35,6 +36,12 @@ public class DataLoader {
     @RequestMapping(value = "/routenames", method = RequestMethod.GET)
     public String routenames() {
         osmService.doOSMRoutesNameExtraction();
+        return "/helloSpring";
+    }
+
+    @RequestMapping(value = "/stopnames/{id}", method = RequestMethod.GET)
+    public String stopnamesId(@PathVariable Long id) {
+        osmService.doOSMStopsNameExtractionId(id);
         return "/helloSpring";
     }
 

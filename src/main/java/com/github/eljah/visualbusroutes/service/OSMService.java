@@ -218,6 +218,14 @@ public class OSMService {
         busStopToCheckRepository.save(busStopToCheck);
     }
 
+    @Transactional("transactionManager")
+    public void doOSMStopsNameExtractionId(Long id) {
+        BusStopToCheck busStopToCheck = new BusStopToCheck();
+        busStopToCheck.setOsmId(id);
+        busStopToCheck.setChecked("0");
+        busStopToCheckRepository.save(busStopToCheck);
+    }
+
 
 
     //@Transactional("transactionManager")
@@ -311,7 +319,12 @@ public class OSMService {
     public Long getCountOfOsmIdsExisted(List<Long> busStopsNodeIds)
     {
         Long toBeReturned=busStopsDao.countByOsmIds(busStopsNodeIds);
-        System.out.println("COUNT"+toBeReturned);
+        System.out.println("COUNT "+toBeReturned);
+        //List<Long> toBeReturned2=busStopsDao.getStopsMissing(busStopsNodeIds);
+        //for (Long l: toBeReturned2)
+        //{
+        //    System.out.println("MISSING "+l);;
+        //}
         return toBeReturned;
     }
 

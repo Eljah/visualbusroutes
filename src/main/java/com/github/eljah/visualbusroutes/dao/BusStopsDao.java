@@ -1,7 +1,9 @@
 package com.github.eljah.visualbusroutes.dao;
 
+import com.github.eljah.visualbusroutes.domain.BusStop;
 import com.github.eljah.visualbusroutes.domain.Student;
 import com.google.appengine.api.datastore.Key;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -11,6 +13,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +44,27 @@ public class BusStopsDao {
         entityManager.close();
         //entityManager.getTransaction().commit();
         return toBeReturned;
+    }
+
+    public List<Long> getStopsMissing(List<Long> osmIds) {
+        List<BusStop> toBeReturned=  entityManager.createQuery("select s from BusStop s where s.osmId in (:id)")
+                .setParameter("id",osmIds)
+                .getResultList();
+        entityManager.clear();
+        //entityManager.flush();
+        entityManager.close();
+        //entityManager.getTransaction().commit();
+
+        List<Long> copy= new ArrayList<>(osmIds);
+
+        for (BusStop busStop:toBeReturned)
+        {
+            if (copy.contains(busStop.getOsmId()))
+            {
+                copy.remove(busStop.getOsmId());
+            }
+        }
+        return osmIds;
     }
 
 }
