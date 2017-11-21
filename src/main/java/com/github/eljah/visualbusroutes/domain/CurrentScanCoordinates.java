@@ -10,7 +10,7 @@ import javax.persistence.Id;
 @Entity
 public class CurrentScanCoordinates  {
     @Id
-    int id=1;
+    public Long id=1l;
     private double latitude;
     private double longitude;
 
