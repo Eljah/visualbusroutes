@@ -320,11 +320,13 @@ public class OSMService {
     {
         Long toBeReturned=busStopsDao.countByOsmIds(busStopsNodeIds);
         System.out.println("COUNT "+toBeReturned);
-        //List<Long> toBeReturned2=busStopsDao.getStopsMissing(busStopsNodeIds);
-        //for (Long l: toBeReturned2)
-        //{
-        //    System.out.println("MISSING "+l);;
-        //}
+        List<Long> toBeReturned2=busStopsDao.getStopsMissing(busStopsNodeIds);
+        for (Long l: toBeReturned2)
+        {
+            System.out.println("MISSING "+l);;
+            if (busStopRepository.findOne(l)!=null) {System.out.println("OLOLO!");;};
+        }
+
         return toBeReturned;
     }
 

@@ -1,13 +1,16 @@
 package com.github.eljah.visualbusroutes.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
  * Created by eljah32 on 10/22/2017.
  */
 
 @Entity
-public class CurrentScanCoordinates  extends BaseEntity {
+public class CurrentScanCoordinates  {
+    @Id
+    int id=1;
     private double latitude;
     private double longitude;
 

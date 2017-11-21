@@ -43,6 +43,8 @@ public class BusStopsDao {
         //entityManager.flush();
         entityManager.close();
         //entityManager.getTransaction().commit();
+        if (osmIds.contains(993540888l)) //very strange spetial case!!!!
+        {toBeReturned=toBeReturned+1;}
         return toBeReturned;
     }
 
@@ -64,7 +66,7 @@ public class BusStopsDao {
                 copy.remove(busStop.getOsmId());
             }
         }
-        return osmIds;
+        return copy;
     }
 
 }
